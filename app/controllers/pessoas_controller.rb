@@ -52,7 +52,7 @@ class PessoasController < ApplicationController
 
             results = @conn.select_one "select * from pessoas order by numero_registro desc limit 1"
 
-            render json: results, status: 201
+            render json: results, status: 200
         else
             render json: {message: "Preencha todos os campos!!"}, status: 418
         end
@@ -74,7 +74,31 @@ class PessoasController < ApplicationController
 
     def update
 
-
+        @conn.execute("  insert into pessoas(#{colunas}) 
+                            values( #{pessoa.codigo_fonte}, 
+                                    #{pessoa.cpf},
+                                    '#{pessoa.nome}',
+                                    '#{pessoa.email}',
+                                    #{pessoa.telefone},
+                                    #{pessoa.celular},
+                                    #{pessoa.cep},
+                                    #{pessoa.codigo_UF},
+                                    #{pessoa.codigo_cidade},
+                                    #{pessoa.codigo_municipio},
+                                    '#{pessoa.sexo}',
+                                    null,
+                                    #{pessoa.codigo_faixa_etaria},
+                                    #{pessoa.codigo_estado_civil},
+                                    '#{pessoa.classe_social}',
+                                    #{pessoa.codigo_instrucao},
+                                    #{pessoa.codigo_renda},
+                                    #{pessoa.codigo_profissao},
+                                    #{pessoa.codigo_posicao_trabalho},
+                                    '#{pessoa.imovel}',
+                                    '#{pessoa.funcionario}',
+                                    '#{pessoa.moradia}',
+                                    #{pessoa.possui_carro},
+                                    '#{pessoa.raca}')")
         
     end
 
