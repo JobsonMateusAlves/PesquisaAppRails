@@ -64,7 +64,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.integer "codigo_cidade", null: false
     t.integer "codigo_municipio", null: false
     t.string "sexo", limit: 1
-    t.timestamp "data_nascimento"
+    t.date "data_nascimento"
     t.integer "codigo_faixa_etaria", null: false
     t.integer "codigo_estado_civil", null: false
     t.string "classe_social", limit: 1
