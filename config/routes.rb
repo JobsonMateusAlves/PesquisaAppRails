@@ -27,7 +27,7 @@ Rails.application.routes.draw do
   get "rendas", to: "rendas#show"
   # Ufs_controller ok
   get "ufs", to: "ufs#show"
+  # Ufs_controller ok
+  get "historicoCadastros", to: "historico_cadastros#show"
 
-  
-  
 end
