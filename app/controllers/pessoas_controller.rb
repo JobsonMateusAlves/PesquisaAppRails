@@ -6,13 +6,13 @@ class PessoasController < ApplicationController
     def create
 
         pessoa = Pessoa.new(pessoa_params)
-        data = Time.at(pessoa.data_nascimento).to_datetime  #convente timeStamp para dateTime
-        dateFormatted = data.strftime("'%Y-%m-%d'") #convente pro formato necessário para salvar no banco
-        puts("data formatada: #{dateFormatted}")    #printa
-
         successfull = checar_campos(pessoa) #chama função para checar se todos os campos foram preenchidos.
 
         if successfull
+
+            data = Time.at(pessoa.data_nascimento).to_datetime  #convente timeStamp para dateTime
+            dateFormatted = data.strftime("'%Y-%m-%d'") #convente pro formato necessário para salvar no banco
+            puts("data formatada: #{dateFormatted}")    #printa
             
             colunas = ""
             contador = 0
@@ -124,46 +124,53 @@ class PessoasController < ApplicationController
     def update
 
         pessoa = Pessoa.new(pessoa_params)  #instancia um objeto pessoa a partir dos parametros recebidos.
-        data = Time.at(pessoa.data_nascimento).to_datetime  #convente timeStamp para dateTime
-        dateFormatted = data.strftime("'%Y-%m-%d'") #convente pro formato necessário para salvar no banco
-        puts("data formatada: #{dateFormatted}")    #printa
+        successfull = checar_campos(pessoa) #chama função para checar se todos os campos foram preenchidos.
 
-        #Comando de editar dado em uma tabela
-        @conn.execute(" update pessoas set 
-                        codigo_fonte = #{pessoa.codigo_fonte}, 
-                        cpf = '#{pessoa.cpf}', 
-                        nome = '#{pessoa.nome}', 
-                        email = '#{pessoa.email}', 
-                        telefone = '#{pessoa.telefone}', 
-                        celular = '#{pessoa.celular}', 
-                        cep = '#{pessoa.cep}', 
-                        codigo_UF = #{pessoa.codigo_UF}, 
-                        codigo_cidade = #{pessoa.codigo_cidade}, 
-                        codigo_municipio = #{pessoa.codigo_municipio}, 
-                        sexo = '#{pessoa.sexo}', 
-                        data_nascimento = #{dateFormatted}, 
-                        codigo_faixa_etaria = #{pessoa.codigo_faixa_etaria}, 
-                        codigo_estado_civil = #{pessoa.codigo_estado_civil}, 
-                        classe_social = '#{pessoa.classe_social}', 
-                        codigo_instrucao = #{pessoa.codigo_instrucao}, 
-                        codigo_renda = #{pessoa.codigo_renda}, 
-                        codigo_profissao = #{pessoa.codigo_profissao}, 
-                        codigo_posicao_trabalho = #{pessoa.codigo_posicao_trabalho}, 
-                        imovel = '#{pessoa.imovel}', 
-                        funcionario = '#{pessoa.funcionario}', 
-                        moradia = '#{pessoa.moradia}', 
-                        possui_carro = #{pessoa.possui_carro}, 
-                        raca = '#{pessoa.raca}' 
-                        where numero_registro = #{params[:numero_registro]}")
+        if successfull
 
-        result = @conn.select_one "select * from pessoas where numero_registro = #{params[:numero_registro]}" #pega o objeto editado
+            data = Time.at(pessoa.data_nascimento).to_datetime  #convente timeStamp para dateTime
+            dateFormatted = data.strftime("'%Y-%m-%d'") #convente pro formato necessário para salvar no banco
+            puts("data formatada: #{dateFormatted}")    #printa
 
-        if !result.nil?  #Testa se o resultado é nulo
-            result["data_nascimento"] = result["data_nascimento"].to_time.to_i 
-            
-            render json: result, status: 200 #retorna o json do objeto editado
-        else
-            render json: {message: "Não encontrado"}, status: 404 #retorna not found se nao existir esse id no banco.
+            #Comando de editar dado em uma tabela
+            @conn.execute(" update pessoas set 
+                            codigo_fonte = #{pessoa.codigo_fonte}, 
+                            cpf = '#{pessoa.cpf}', 
+                            nome = '#{pessoa.nome}', 
+                            email = '#{pessoa.email}', 
+                            telefone = '#{pessoa.telefone}', 
+                            celular = '#{pessoa.celular}', 
+                            cep = '#{pessoa.cep}', 
+                            codigo_UF = #{pessoa.codigo_UF}, 
+                            codigo_cidade = #{pessoa.codigo_cidade}, 
+                            codigo_municipio = #{pessoa.codigo_municipio}, 
+                            sexo = '#{pessoa.sexo}', 
+                            data_nascimento = #{dateFormatted}, 
+                            codigo_faixa_etaria = #{pessoa.codigo_faixa_etaria}, 
+                            codigo_estado_civil = #{pessoa.codigo_estado_civil}, 
+                            classe_social = '#{pessoa.classe_social}', 
+                            codigo_instrucao = #{pessoa.codigo_instrucao}, 
+                            codigo_renda = #{pessoa.codigo_renda}, 
+                            codigo_profissao = #{pessoa.codigo_profissao}, 
+                            codigo_posicao_trabalho = #{pessoa.codigo_posicao_trabalho}, 
+                            imovel = '#{pessoa.imovel}', 
+                            funcionario = '#{pessoa.funcionario}', 
+                            moradia = '#{pessoa.moradia}', 
+                            possui_carro = #{pessoa.possui_carro}, 
+                            raca = '#{pessoa.raca}' 
+                            where numero_registro = #{params[:numero_registro]}")
+
+            result = @conn.select_one "select * from pessoas where numero_registro = #{params[:numero_registro]}" #pega o objeto editado
+
+                if !result.nil?  #Testa se o resultado é nulo
+                    result["data_nascimento"] = result["data_nascimento"].to_time.to_i 
+                    
+                    render json: result, status: 200 #retorna o json do objeto editado
+                else
+                    render json: {message: "Não encontrado"}, status: 404 #retorna not found se nao existir esse id no banco.
+                end
+        else 
+            render json: {message: "Preencha todos os campos!!"}, status: 418 #Retorna um erro pedindo para preencher todos os campos
         end
     end
 
